@@ -1,0 +1,54 @@
+#include <vector>
+
+using namespace std;
+
+class Solution {
+public:
+    bool possibleBipartition(int n, vector<vector<int>>& dislikes) {
+        
+        vector<vector<int>> graph(n + 1);
+        for (const auto& d : dislikes) {
+            graph[d[0]].push_back(d[1]);
+            graph[d[1]].push_back(d[0]); 
+        }
+
+        
+        vector<int> colors(n + 1, 0);
+
+        
+        for (int i = 1; i <= n; i++) {
+            
+            if (colors[i] == 0) {
+                
+                if (!dfs(graph, colors, i, 1)) {
+                    return false; 
+                }
+            }
+        }
+
+        return true;
+    }
+
+private:
+    bool dfs(const vector<vector<int>>& graph, vector<int>& colors, int curr, int color) {
+        
+        colors[curr] = color;
+
+        for (int neighbor : graph[curr]) {
+            
+            if (colors[neighbor] != 0) {
+                
+                if (colors[neighbor] == colors[curr]) {
+                    return false;
+                }
+            } else {
+                
+                if (!dfs(graph, colors, neighbor, -color)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+};
